@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Joachim Breitner, DFINITY Foundation" />
+  <title>Haskell for Readers</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="pandoc.css" />
+  <link rel="stylesheet" href="solution.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <script defer="defer">
+  function onload(){
+    var elements = document.querySelectorAll(".Solution");
+    function reveal() { this.classList.add("revealed"); }
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].addEventListener("click", reveal);
+    }
+  };
+  document.addEventListener( "DOMContentLoaded", onload, false );
+  </script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Haskell for Readers</h1>
+<p class="author"><a href="http://www.joachim-breitner.de/">Joachim Breitner</a>, <a href="https://dfinity.org/">DFINITY Foundation</a></p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#preface">Preface</a></li>
+<li><a href="#the-basics-of-functional-programming"><span class="toc-section-number">1</span> The basics of functional programming</a><ul>
+<li><a href="#numbers-and-arithmetic-operators"><span class="toc-section-number">1.1</span> Numbers and arithmetic operators</a></li>
+<li><a href="#applying-functions"><span class="toc-section-number">1.2</span> Applying Functions</a></li>
+<li><a href="#booleans-and-branching"><span class="toc-section-number">1.3</span> Booleans and branching</a></li>
+<li><a href="#function-abstraction"><span class="toc-section-number">1.4</span> Function abstraction</a></li>
+<li><a href="#recursion"><span class="toc-section-number">1.5</span> Recursion</a></li>
+<li><a href="#higher-order-functions"><span class="toc-section-number">1.6</span> Higher-order functions</a></li>
+<li><a href="#anonymous-functions"><span class="toc-section-number">1.7</span> Anonymous functions</a></li>
+<li><a href="#higher-order-function-definition"><span class="toc-section-number">1.8</span> Higher-order function definition</a></li>
+<li><a href="#currying"><span class="toc-section-number">1.9</span> Currying</a></li>
+<li><a href="#the-composition-operator"><span class="toc-section-number">1.10</span> The composition operator ★</a></li>
+<li><a href="#laziness"><span class="toc-section-number">1.11</span> Laziness ★</a></li>
+</ul></li>
+<li><a href="#types"><span class="toc-section-number">2</span> Types</a><ul>
+<li><a href="#tooling-interlude-editing-files"><span class="toc-section-number">2.1</span> Tooling interlude: Editing files ★</a></li>
+<li><a href="#basic-types"><span class="toc-section-number">2.2</span> Basic types</a></li>
+<li><a href="#polymorphism"><span class="toc-section-number">2.3</span> Polymorphism</a></li>
+<li><a href="#constrained-types-a-first-glimpse"><span class="toc-section-number">2.4</span> Constrained types (a first glimpse)</a></li>
+<li><a href="#parametricity"><span class="toc-section-number">2.5</span> Parametricity</a></li>
+<li><a href="#algebraic-data-types"><span class="toc-section-number">2.6</span> Algebraic data types</a></li>
+<li><a href="#predefined-data-types"><span class="toc-section-number">2.7</span> Predefined data types</a></li>
+<li><a href="#records"><span class="toc-section-number">2.8</span> Records</a></li>
+<li><a href="#newtypes"><span class="toc-section-number">2.9</span> Newtypes</a></li>
+<li><a href="#type-synonyms"><span class="toc-section-number">2.10</span> Type synonyms</a></li>
+</ul></li>
+<li><a href="#code-structure-small-and-large"><span class="toc-section-number">3</span> Code structure small and large</a></li>
+</ul>
+</nav>
+<section id="preface" class="level1 unnumbered">
+<h1>Preface</h1>
+<p>Welcome to the lecture series “Haskell for Readers”. This workshop is uniquely tailored to those who need to <em>read</em>, rather than <em>write</em> Haskell code: auditors, scientists, managers, testers etc.</p>
+<section id="scope" class="level3 unnumbered">
+<h3>Scope</h3>
+<p>This goal implies a higher focus on syntax (because you can <em>write</em> programs ignoring most syntactic gadgets available to you, but if you read code, you have to deal with them), types and type signatures (because they are the key to understanding Haskell code) and abstraction patterns (because it is key to understanding well-written code, and Haskell excels at abstraction).</p>
+<p>On the other hand, less words will be spent on how to approach writing the program, e.g. how to set up your tooling, how to please Haskell’s layout rules, how to design your data type, which libraries to pick, how to read error messages. That said, we hope that even Haskell programmers will gain useful insight from tutorial.</p>
+<p>Nevertheless it is hard to understand a programming paradigm without writing any code, so there will some amount of hands-on work to be done, especially early on, when we start with a introduction to basic functional programming.</p>
+</section>
+<section id="form-and-audience" class="level3 unnumbered">
+<h3>Form and audience</h3>
+<p>This document is not (necessarily) a self-contained tutorial; it is rather the base for an interactive lecture, given by a real instructor. In such a lecture, some holes will be filled as we go, and the questions from the audience form a crucial part of the learning experience.</p>
+<p>That said we I that the notes are detailed enough that while they are not ideal for independent study, they are at least useful and helpful.</p>
+<p>I expect the audience to be familiar with programming and computer science in general, but do not assume prior knowledge of functional program (or, in case you are worried, category theory).</p>
+<p>The exercises are all very small, in the order of minutes, and are meant to be done along the way, especially as later material may refer to their results. If you are reading this on your own and you really do not feel like doing them, you can click on the blurred solutions to at least read them.</p>
+<p>Some sections are marked with ★. These are optional in the sense that the following material does not rely heavily on them. If time is short, e.g. during a workshop, they can be skipped.</p>
+</section>
+<section id="acknowledgments-and-license" class="level3 unnumbered">
+<h3>Acknowledgments and license</h3>
+<p>The creation of this material was sponsored by the <a href="http://dfinity.org/">DFINITY Foundation</a>, and is shared with the public under the terms of the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>. You can view <a href="https://github.com/nomeata/haskell-for-readers/">the source on GitHub</a> of this document, and submit improvements there.</p>
+</section>
+</section>
+<section id="the-basics-of-functional-programming" class="level1">
+<h1><span class="header-section-number">1</span> The basics of functional programming</h1>
+<p>Functional program is the the art of thinking about <em>data</em> and how the new data is calculated from old data, rather than thinking about how to <em>modify</em> data.</p>
+<section id="numbers-and-arithmetic-operators" class="level2">
+<h2><span class="header-section-number">1.1</span> Numbers and arithmetic operators</h2>
+<p>The simplest form of data are numbers, and basic arithmetic is one way of creating new numbers from old numbers.</p>
+<p>To play around with this, start the Haskell REPL (“read-eval-print-loop”) by running <code>ghci</code> (or maybe on <a href="https://tryhaskell.org/">tryhaskell.org</a>), and enter some numbers, and some of the usual arithmetic operations:</p>
+<pre><code>$ ghci
+GHCi, version 8.4.4: http://www.haskell.org/ghc/  :? for help
+Prelude&gt; 1
+1
+Prelude&gt; 1 + 1
+2
+Prelude&gt; 2 + 3 * 4
+14
+Prelude&gt; (2 + 3) * 4
+20</code></pre>
+<p>At this point we can tell that the usual precedence rules apply (i.e. the <a href="https://en.wikipedia.org/wiki/Order_of_operations#Mnemonics">PEMDAS rule</a>).</p>
+<pre><code>Prelude&gt; 0 - 1
+-1</code></pre>
+<p>Numbers can be negative…</p>
+<pre><code>Prelude&gt; 2^10
+1024
+Prelude&gt; 2^2^10
+17976931348623159077293051907890247336179769789423065727343008115773267580550096
+31327084773224075360211201138798713933576587897688144166224928474306394741243777
+67893424865485276302219601246094119453082952085005768838150682342462881473913110
+540827237163350510684586298239947245938479716304835356329624224137216
+Prelude&gt; (2^2)^10
+1048576</code></pre>
+<p>…and also very large. By default, Haskell uses arbitrary precision integer arithmetic. Note that for this lecture, we will completely avoid and ignore floating point arithmetic.</p>
+<p>In the last example we can see that Haskell interprets <code>a^b^c</code> as <code>a^(b^c)</code>, i.e. the power operator is <em>right associative</em>. It is worth noting that this information is not hard-coded in the compiler. Instead, when the operator is defined somewhere in a library, its associativity and precedence can be declared. We can ask the compiler about this information:</p>
+<pre><code>Prelude&gt; :info (^)
+(^) :: (Num a, Integral b) =&gt; a -&gt; b -&gt; a   -- Defined in ‘GHC.Real’
+infixr 8 ^</code></pre>
+<p>Let us ignore the first line (which is the type signature): The <code>r</code> in <code>infixr</code> tells us that the <code>(^)</code> operator is right-associative. And the number is the precedence; a higher number means that this operator binds more tightly.</p>
+<div class="Exercise">
+<p>What associativity do you expect for <code>(+)</code> and <code>(-)</code>? Verify your expectation.</p>
+</div>
+<div class="Solution">
+<p>Both operator are left-associative, so that <code>10 - 2 + 3 - 4</code> means <code>((10 - 2) + 3) - 4</code> as expected.</p>
+</div>
+<div class="Exercise">
+<p>Look up the precedences of the other arithmetic operations, and see how that corresponds to the PEMDAS rule.</p>
+</div>
+<div class="Solution">
+<p>The precedences of <code>(+)</code> and <code>(-)</code> are the same, and smaller than the precedence of <code>(*)</code>, which is again shorter than the precedence of <code>(^)</code>.</p>
+</div>
+</section>
+<section id="applying-functions" class="level2">
+<h2><span class="header-section-number">1.2</span> Applying Functions</h2>
+<p>So far we have a calculator (which is not useless, I sometimes use <code>ghci</code> as a calculator). But to get closer to functional programming, let us look at some functions that are already available to use.</p>
+<p>To stay within the realm of arithmetic (if only to have something to talk about), let us play with the <code>div</code> and <code>mod</code> functions. These do what you would expect from them:</p>
+<pre><code>Prelude&gt; div 123 100
+1
+Prelude&gt; mod 123 100
+23</code></pre>
+<p>We observe that to apply a function, we just write the function, followed by the arguments; no parenthesis or commas needed. This not only makes for more elegant and less noise code; but there is also a very deep and beautiful reason for this, which we will come to later.</p>
+<p>At this point, surely someone wants to know what happens when we divide by 0:</p>
+<pre><code>Prelude&gt; div 123 0
+*** Exception: divide by zero</code></pre>
+<p>Haskell has exceptions, they can even be caught etc., but let us talk about that later.</p>
+<p>Of course, if the argument is not just a single number, we somehow have to make clear where the argument begins and ends:</p>
+<pre><code>Prelude&gt; div (120 + 3) (10 ^ 2)
+1</code></pre>
+<p>(If you leave out the parenthesis, you get a horrible error messages). In technical terms, we can say that function application behaves like an right-associative operator of highest precedence. But it is easier to just remember <strong>function application binds most tightly</strong>. (Exception: Record construction and update binds even more tightly, although some consider that a design flaw.)</p>
+<p>Just to have more examples, here are two other functions that we can play around with:</p>
+<pre><code>Prelude&gt; id 42
+42
+Prelude&gt; const 23 42
+23</code></pre>
+<div class="Exercise">
+<p>Can you predict the result of the following?</p>
+<pre><code>Prelude&gt; 1 + const 2 3 + 4</code></pre>
+</div>
+<div class="Solution">
+<pre><code>6</code></pre>
+</div>
+<p><strong>A note on syntactic sugar:</strong> Haskell is a high-calorie language: There is lots of syntactic sugar. Syntactic sugar refers to when there are alternative ways of writing something that <em>look</em> different, but <em>behave</em> the same. The goal is to allow the programmer to write the code in a way that best suits the reader, which is good, but it also means that a reader needs to know about the sugar.</p>
+<p><strong>Infix operator application (Syntactic Sugar)</strong>: Functions that take two arguments can be written infix, as if they were an operator, by putting backticks around the name:</p>
+<pre><code>Prelude&gt; 123 `div` 10
+12
+Prelude&gt; 123 `mod` 10
+3
+Prelude&gt; (120 + 3) `div` (10 ^ 2)
+1
+Prelude&gt; (120 + 3) `div` 10 ^ 2
+1
+Prelude&gt; ((120 + 3) `div` 10) ^ 2
+144</code></pre>
+<p>We see that written as operators, even functions have an associativity and precedence:</p>
+<pre><code>Prelude&gt; :info div
+class (Real a, Enum a) =&gt; Integral a where
+  ...
+  div :: a -&gt; a -&gt; a
+  ...
+    -- Defined in ‘GHC.Real’
+infixl 7 `div`</code></pre>
+<p><strong>Prefix operator application (Syntactic Sugar) ★</strong>: We can also go the other way, and use any operator as if it were a function, by wrapping it in parentheses:</p>
+<pre><code>Prelude&gt; 1 + 1
+2
+Prelude&gt; (+) 1 1
+2</code></pre>
+<p><strong>The dollar operator (Non-Syntactic Sugar) ★</strong>: Consider an expression that takes a number, and applies a number of functions , maybe with arguments, to it, such as:</p>
+<pre><code>f5 (f4 (f3 (f2 (f1 42))))</code></pre>
+<p>Passing a piece of data through a number of functions is very common, and some (including me) greatly dislike the accumulation of parentheses there. Therefore, it is idiomatic to use the <code>($)</code> operator:</p>
+<pre><code>f5 $ f4 $ f3 $ f2 $ f1 42</code></pre>
+<p>This operator takes a function as the first argument, an argument as the second argument, and applies the function to the argument. In that way, it is exactly the same as function application. But it is <em>right-associative</em> (instead of left-associative) and has the <em>lowest precedence</em> (instead of the highest precedence). An easier way of reading such code is to read <code>($)</code> as “the same as parenthesis around the rest of the line”.</p>
+<p>I call this non-syntactic sugar, because the dollar operator it is not part of the built-in language, but can be define by anyone.</p>
+<div class="Exercise">
+<p>What is the result of</p>
+<pre><code>Prelude&gt; (-) 5 $ div 16 $ (-) 10 $ 4 `div` 2</code></pre>
+</div>
+<div class="Solution">
+<pre><code>3</code></pre>
+</div>
+</section>
+<section id="booleans-and-branching" class="level2">
+<h2><span class="header-section-number">1.3</span> Booleans and branching</h2>
+<p>Some cryptographers might be happy to only write code that always does the same thing (yay, no side effects), but most of us pretty quickly want to write branching code.</p>
+<p>As you would expect, Haskell has the usual operators to compare numbers:</p>
+<pre><code>Prelude&gt; 1 + 1 == 2
+True
+Prelude&gt; 4 &lt; 5
+True
+Prelude&gt; 4 &gt;= 5
+False
+Prelude&gt; 23 /= 42
+True</code></pre>
+<p>We see that there are values <code>True</code> and <code>False</code>. We can combine them using the usual Boolean operators:</p>
+<pre><code>Prelude&gt; 1 + 1 == 2 &amp;&amp; 5 &lt; 4
+False
+Prelude&gt; 1 + 1 == 2 || 5 &lt; 4
+True</code></pre>
+<p>And finally, we can use <code>if … then … else …</code> to branch based on such a Boolean expression:</p>
+<pre><code>Prelude&gt; if 5 &lt; 0 then 0 else 1
+1
+Prelude&gt; if -5 &lt; 0 then 0 else 1
+0</code></pre>
+<p>The use of <code>if … then … else …</code> is actually not the most idiomatic way to code decisions in Haskell, and we will come back to that point later, but for now it is good enough.</p>
+</section>
+<section id="function-abstraction" class="level2">
+<h2><span class="header-section-number">1.4</span> Function abstraction</h2>
+<p>Assume you want to check a bunch of numbers as to whether they are multiples of 10 (so called “round numbers” in German). You can do that using <code>mod</code> and <code>(==)</code>:</p>
+<pre><code>Prelude&gt; 5 `mod` 10 == 0
+False
+Prelude&gt; 10 `mod` 10 == 0
+True
+Prelude&gt; 11 `mod` 10 == 0
+False
+Prelude&gt; 20 `mod` 10 == 0
+True
+Prelude&gt; -20 `mod` 10 == 0
+True
+Prelude&gt; 123 `mod` 10 == 0
+False</code></pre>
+<p>But this gets repetitive quickly. And whenever we program something in a repetitive way, we try to recognize the <em>pattern</em> and abstract over the changing <em>parameter</em>, leaving only the common parts</p>
+<p>Here, the common pattern is <code>x `mod` 10 == 0</code>, with a parameter named <code>x</code>. We can give this pattern a name, and use it instead:</p>
+<pre><code>Prelude&gt; isRound x = x `mod` 10 == 0
+Prelude&gt; isRound 5
+False
+Prelude&gt; isRound 10
+True
+Prelude&gt; isRound 11
+False
+Prelude&gt; isRound 20
+True
+Prelude&gt; isRound (-20)
+True
+Prelude&gt; isRound 123
+False</code></pre>
+<p>And now we are squarely in the realm of functional programming, as we have just defined out first function, <code>isRound</code>!</p>
+<p>Note that we defined the <code>isRound</code> by way of an equation. And it really is an equation: Wherever we see <code>isRound something</code>, we can obtain its meaning by replacing it with <code>something `mod` 10 == 0</code>. This <em>equational reasoning</em>, where you replace equals by equals is one key technique to make sense of Haskell programs.</p>
+<div class="Exercise">
+<p>Discuss: Think of other programming language that have concepts called functions. Can you always replace a function call with the function definition? Does it change the meaning of the program?</p>
+</div>
+<div class="Exercise">
+<p>Write a function <code>absoluteValue</code> with one parameter. If the parameter is negative, returns its opposite number, otherwise the number itself.</p>
+</div>
+<div class="Solution">
+<div class="sourceCode" id="cb23"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb23-1" title="1">absoluteValue x <span class="fu">=</span> <span class="kw">if</span> x <span class="fu">&lt;</span> <span class="dv">0</span> <span class="kw">then</span> <span class="fu">-</span> x <span class="kw">else</span> x</a></code></pre></div>
+</div>
+<div class="Exercise">
+<p>Write a function <code>isHalfRound</code> that checks if a number is divisible by 5, by checking whether the last digit is 0 or 5.</p>
+</div>
+<div class="Solution">
+<div class="sourceCode" id="cb24"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb24-1" title="1">isHalfRound x <span class="fu">=</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">||</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">5</span></a></code></pre></div>
+</div>
+<div class="Exercise">
+<p>Write a function <code>isEven</code> that checks if a number is divisible by 2, by checking whether the last digit is 0, 2, 4, 6, 8.</p>
+</div>
+<div class="Solution">
+<div class="sourceCode" id="cb25"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb25-1" title="1">isEven x <span class="fu">=</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">||</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">2</span> <span class="fu">||</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">4</span> <span class="fu">||</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">6</span> <span class="fu">||</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">8</span></a></code></pre></div>
+</div>
+<p>Of course, you can abstract over more than one parameter. In the last exercise, you had to write something like <code>x `div` 10 == y</code> a lot. So it makes sense to abstract over that:</p>
+<pre><code>Prelude&gt; hasLastDigit x y = x `div` 10 == y</code></pre>
+<p>This allows us to define <code>isHalfRound</code> as follows:</p>
+<pre><code>Prelude&gt; isHalfRound x = x `hasLastDigit` 0 || x `hasLastDigit` 5</code></pre>
+<p>which, if you read it out, is almost a transliteration of the specification! Here we see how abstraction, together with good naming and syntax, can produce very clear and readable code.</p>
+<p><strong>Infix operator application again (Syntactic Sugar)</strong>: By the way, you can use infix operator syntax already when defining a function:</p>
+<pre><code>x `divides` y = x `div` y == 0</code></pre>
+</section>
+<section id="recursion" class="level2">
+<h2><span class="header-section-number">1.5</span> Recursion</h2>
+<p>We already saw that one function that we defined could call another. But the real power of general computation comes when a function can call itself, i.e. when we employ recursion. Recursion is a very fundamental technique in functional programming, much more so than loops or iterators or such.</p>
+<p>Let us come up with a function that determines the number of digits in a given number. We first check if the number is already just one digit:</p>
+<pre><code>Prelude&gt; countDigits n = if n &lt; 10 then 1 else █</code></pre>
+<p>At this point, we know that the number is larger than 10. So to count the digits, we would like to cut off one digit:</p>
+<pre><code>Prelude&gt; countDigits n = if n &lt; 10 then 1 else (n `div` 10)█</code></pre>
+<p>and count the number of digits of <em>that</em> number</p>
+<pre><code>Prelude&gt; countDigits n = if n &lt; 10 then 1 else countDigits (n `div` 10)█</code></pre>
+<p>and, of course, add one to that number:</p>
+<pre><code>Prelude&gt; countDigits n = if n &lt; 10 then 1 else countDigits (n `div` 10) + 1
+Prelude&gt; countDigits 0
+1
+Prelude&gt; countDigits 5
+1
+Prelude&gt; countDigits 10
+2
+Prelude&gt; countDigits 11
+2
+Prelude&gt; countDigits 99
+2
+Prelude&gt; countDigits 100
+3
+Prelude&gt; countDigits 1000
+4
+Prelude&gt; countDigits (10^12345)
+12346</code></pre>
+<p>The fact that we can replace equals with equals does not change just because we use recursion. For example, we can figure out what <code>countDigits 789</code> does by replacing equals with equals:</p>
+<pre><code>  countDigits 789
+= if 789 &lt; 10 then 1 else countDigits (789 `div` 10) + 1
+= if False then 1 else countDigits (789 `div` 10) + 1
+= countDigits (789 `div` 10) + 1
+= countDigits 78 + 1
+= (if 78 &lt; 10 then 1 else countDigits (78 `div` 10) + 1) + 1
+= (if False then 1 else countDigits (78 `div` 10) + 1) + 1
+= (countDigits (78 `div` 10) + 1) + 1
+= (countDigits 7 + 1) + 1
+= ((if 7 &lt; 10 then 1 else countDigits (7 `div` 10) + 1) + 1) + 1
+= ((if True then 1 else countDigits (7 `div` 10) + 1) + 1) + 1
+= (1 + 1) + 1
+= 2 + 1
+= 3</code></pre>
+<div class="Exercise">
+<p>Write the function <code>sumDigits</code> that sums up the digits of a natural number.</p>
+</div>
+<div class="Solution">
+<div class="sourceCode" id="cb34"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb34-1" title="1">sumDigits n <span class="fu">=</span> <span class="kw">if</span> n <span class="fu">&lt;</span> <span class="dv">10</span> <span class="kw">then</span> n <span class="kw">else</span> sumDigits (n <span class="ot">`div`</span> <span class="dv">10</span>) <span class="fu">+</span> (n <span class="ot">`mod`</span> <span class="dv">10</span>)</a></code></pre></div>
+</div>
+</section>
+<section id="higher-order-functions" class="level2">
+<h2><span class="header-section-number">1.6</span> Higher-order functions</h2>
+<p>We created functions when we took expressions that followed a certain pattern, and abstracted over a number that occurred therein. But the thing we can abstract over does not have to be just a simple number. It could also be a function!</p>
+<p>Consider the task of calculating the number of digits in the number of digits of a number:</p>
+<pre><code>Prelude&gt; countDigits (countDigits 5)
+1
+Prelude&gt; countDigits (countDigits 10)
+1
+Prelude&gt; countDigits (countDigits (10^10))
+2
+Prelude&gt; countDigits (countDigits (10^123))
+3
+Prelude&gt; countDigits (countDigits (15^15))
+2</code></pre>
+<p>Clearly, we can abstract over the argument here:</p>
+<pre><code>Prelude&gt; countCountDigits n = countDigits (countDigits n)
+Prelude&gt; countCountDigits (10^123)
+3</code></pre>
+<p>But now consider we also want <code>sumSumDigits</code>:</p>
+<pre><code>Prelude&gt; sumSumDigits n = sumDigits (sumDigits n)
+Prelude&gt; sumSumDigits (9^9)
+9
+Prelude&gt; sumSumDigits (7^7)
+7
+Prelude&gt; sumSumDigits (13^13)
+13
+Prelude&gt; sumSumDigits (15^15)
+18</code></pre>
+<p>There is clearly a pattern that is shared by both <code>countCountDigits</code> and <code>sumSumDigits</code>: They both apply a function twice. And indeed, we can abstract over that pattern:</p>
+<pre><code>Prelude&gt; twice f x = f (f x)
+Prelude&gt; twice countDigits (15^15)
+2
+Prelude&gt; twice sumDigits (15^15)
+18</code></pre>
+<p>This is our first <em>higher order function</em>, and it is called so because it is a function that take another function as an argument. More precisely, it is called a second-order function, because it takes a normal, i.e. first-order function, as an argument. Abstracting over a second order function yields a third order function, and so on. Up to <a href="https://doi.org/10.1017/S0956796898003001">sixth-order functions</a> are seen in the wild.</p>
+<p>If you look at the last two lines, we again see a common pattern. And abstracting over that, we recover very nice and declarative definitions for <code>countCountDigits</code> and <code>sumSumDigits</code>:</p>
+<pre><code>Prelude&gt; countCountDigits x = twice countDigits x
+Prelude&gt; sumSumDigits x = twice sumDigits x</code></pre>
+<p>The ability to abstract very easily over functions is an important ingredient in making Haskell so excellent at abstraction: It allows to abstract over <em>behavior</em>, instead merely over <em>value</em>. To demonstrate that, let us recall the definitions of <code>countDigits</code> and <code>someDigits</code>:</p>
+<pre><code>Prelude&gt; countDigits n = if n &lt; 10 then 1 else countDigits (n `div` 10) + 1
+Prelude&gt; sumDigits n = if n &lt; 10 then n else sumDigits (n `div` 10) + (n `mod` 10)</code></pre>
+<p>These two functions share something: They share a behavior! Both iterate over the digits of the function, do something at each digit, and sum something up. And this common functionality is not trivial! So it is very unsatisfying to copy’n’paste it, like we did. So how can we abstract over the parts that differ? It is not obvious on first glance, so go through it step by step, lets give the parts that differ names. For <code>countDigits</code>, we <em>ignore</em> the digit, and just sum up ones:</p>
+<pre><code>Prelude&gt; always1 n = 1
+Prelude&gt; countDigits n = if n &lt; 10 then always1 n else countDigits (n `div` 10) + always1 (n `mod` 10)</code></pre>
+<p>And for <code>sumDigits</code>, we use the digit as is. And we have already seen a function that just returns its argument, the identity function:</p>
+<pre><code>Prelude&gt; sumDigits n = if n &lt; 10 then id n else sumDigits (n `div` 10) + id (n `mod` 10)</code></pre>
+<p>Now the common pattern is clear, and we can abstract over the different parts:</p>
+<pre><code>Prelude&gt; sumDigitsWith f n = if n &lt; 10 then f n else sumDigitsWith f (n `div` 10) + f (n `mod` 10)
+Prelude&gt; countDigits n = sumDigitsWith always1 n
+Prelude&gt; sumDigits n = sumDigitsWith id n</code></pre>
+<p>To recapitulate: We took two functions that were doing somehow related things, and we rewrote them to clearly separate the common parts from the differing parts, and then we could extract the shared essence into its own, higher-order function.</p>
+<p>This single mechanism – abstracting over functions – can <a href="https://www.voxxed.com/2016/04/gang-four-patterns-functional-light-part-1/">replace thick volumes full of design patterns</a> in non-functional programming paradigms.</p>
+<p>Note that if one would have to abstract <code>countDigits</code> and <code>sumDigits</code> to <code>sumDigitsWith</code> in practice, one would probably not rewrite them first with <code>id</code> etc., but just look at them and come up with <code>sumDigitsWith</code> directly.</p>
+<div class="Exercise">
+<p>Write a (recursive) function <code>fixEq</code> so that <code>fixEq f x</code> repeatedly applies <code>f</code> to <code>x</code> until the result does not change.</p>
+</div>
+<div class="Solution">
+<div class="sourceCode" id="cb44"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb44-1" title="1">fixEq f x <span class="fu">=</span> <span class="kw">if</span> f x <span class="fu">==</span> x <span class="kw">then</span> x <span class="kw">else</span> fixEq f (f x)</a></code></pre></div>
+</div>
+<div class="Exercise">
+<p>Use this function and <code>countDigits</code> to write a function <code>isMultipleOf3</code> so that <code>isMultipleOf3 x</code> is true if repeatedly applying <code>countDigits</code> to <code>x</code> results in 3 or 9.</p>
+</div>
+<div class="Solution">
+<div class="sourceCode" id="cb45"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb45-1" title="1">isMultipleOf3 x <span class="fu">=</span> fixEq sumDigits x <span class="fu">==</span> <span class="dv">3</span> <span class="fu">||</span> fixEq sumDigits x <span class="fu">==</span> <span class="dv">6</span> <span class="fu">||</span> fixEq sumDigits x <span class="fu">==</span> <span class="dv">9</span></a></code></pre></div>
+</div>
+</section>
+<section id="anonymous-functions" class="level2">
+<h2><span class="header-section-number">1.7</span> Anonymous functions</h2>
+<p>We defined a function <code>always1</code>, but it seems a bit silly to give a name to such a specialized and small concept. Therefore, Haskell allows us to define <em>anonymous functions</em> on the fly. The syntax is a backslash, followed by the parameter (or parameters), followed by the body of the function. So we can define <code>countDigits</code> and <code>sumDigits</code> without any helper functions like this:</p>
+<pre><code>Prelude&gt; countDigits n = sumDigitsWith (\d -&gt; 1) n
+Prelude&gt; sumDigits n = sumDigitsWith (\d -&gt; d) n</code></pre>
+<p>These are also called <em>lambda abstractions</em>, because they are derived from the Lambda calculus, and the backslash is a poor imitation of the Greek letter lambda (λ).</p>
+</section>
+<section id="higher-order-function-definition" class="level2">
+<h2><span class="header-section-number">1.8</span> Higher-order function definition</h2>
+<p>Lets look at the previous two definitions, and remember that when we define a function this way, we define what to replace the left-hand side with. But notice that the argument <code>n</code> is not touched at all by this definition! So we should get the same result if we simply omit it from the equation, right? And indeed, we can just as well write</p>
+<pre><code>Prelude&gt; countDigits = sumDigitsWith (\d -&gt; 1)
+Prelude&gt; sumDigits = sumDigitsWith (\d -&gt; d)</code></pre>
+<p>It looks as if we just saved two characters. But what really just happened is that we shifted our perspective, and raised the level of abstraction by one layer. Instead of defining a <code>countDigits</code> as a function that takes a number and produces another number, we have defined <code>countDigits</code> as the result of instantiating the pattern <code>sumDigitsWith</code> with the function <code>(\d -&gt; 1)</code>. At this level of thought, we do not care about the argument to <code>countDigits</code>, i.e. what it is called or so.</p>
+<div class="Exercise">
+<p>Which other recent definitions can be changed accordingly?</p>
+</div>
+<div class="Solution">
+<p>The definitions for <code>countCountDigits</code> and <code>sumSumDigits</code>:</p>
+<pre><code>Prelude&gt; countCountDigits = twice countCountDigits
+Prelude&gt; sumSumDigits = twice sumDigits</code></pre>
+</div>
+</section>
+<section id="currying" class="level2">
+<h2><span class="header-section-number">1.9</span> Currying</h2>
+<p>We have already seen functions that <em>receive</em> a function as an argument. The way we use <code>twice</code> or <code>sumDigitsWith</code> here, we can think of them as a function that <em>return</em> functions. And this brings us to the deep and beautiful explanation we write multiple arguments to functions the way we do: Because really, every function only ever has one argument, and returns another one.</p>
+<p>We can <em>think</em> of <code>twice</code> has having two arguments (the function <code>f</code>, and the value <code>x</code>), but really, <code>twice</code> is a function that takes one argument (the function <code>f</code>), and returns another function, that then takes the value <code>x</code>. This “other” function is what we named in the above definition of <code>sumSumDigits</code>.</p>
+</section>
+<section id="the-composition-operator" class="level2">
+<h2><span class="header-section-number">1.10</span> The composition operator ★</h2>
+<p>Because writing code that passes functions around and modifies them (like in <code>twice</code> or <code>sumDigitsWith</code>) is so important in this style of programming, I should at this point introduce the composition operator. It is already pre-defined, but we can define it ourselves:</p>
+<pre><code>Prelude&gt; (f . g) x = f (g x)</code></pre>
+<p>The dot is a poor approximation of the mathematical symbol for function composition, “∘”, and can be read as “<code>f</code> after <code>g</code>”. Note <code>x</code> is passed to <code>g</code> first, and then the result to <code>f</code>.</p>
+<p>It looks like a pretty vacuous definition, but it is very useful in writing high-level code. For example, it allows us the following, nicely abstract definition of <code>twice</code>:</p>
+<pre><code>Prelude&gt; twice f = f . f</code></pre>
+<p>Do you remember the example we used when introducing the dollar operator? We started with</p>
+<pre><code>f5 (f4 (f3 (f2 (f1 42))))</code></pre>
+<p>and rewrote it to</p>
+<pre><code>f5 $ f4 $ f3 $ f2 $ f1 42</code></pre>
+<p>Now imagine we want to abstract over 42:</p>
+<pre><code>many_fs x = f5 (f4 (f3 (f2 (f1 x))))</code></pre>
+<p>This function really is just the composition of a bunch of function. So an idiomatic way of writing it would be</p>
+<pre><code>many_fs  = f5 . f4 . f3 . f2 . f1</code></pre>
+<p>where again, the actual value is no longer the emphasis, but rather the functions.</p>
+<p>The value <code>x</code> is sometimes called the point (as in geometry), and this style of programming is called <em>points-free</em> (or sometimes <em>pointless</em>).</p>
+</section>
+<section id="laziness" class="level2">
+<h2><span class="header-section-number">1.11</span> Laziness ★</h2>
+<p>As a final bit in this section, let’s talk about laziness. Most often this can be ignored when reading Haskell code, and in general laziness is not as important (or as bad) as some people say it is. But it plays an important role in Haskell’s support for abstraction, so let’s briefly look at it.</p>
+<p>Laziness means that an expression is evaluated as late as possible, i.e. when it is needed to make a branching decision, or when it is to be printed on the screen. We can only observe when things are being evaluated when we have side-effects, and the only side effects we can produce so far are non-termination and exceptions. So let us use division by zero to observe that the first argument to <code>const</code> is used, but the second one is not:</p>
+<pre><code>Prelude&gt; 0 `div` 0
+*** Exception: divide by zero
+Prelude&gt; const (0 `div` 0) 1
+*** Exception: divide by zero
+Prelude&gt; const 1 (0 `div` 0)
+1</code></pre>
+<p>To see why this is so crucial for abstraction, consider the following two functions that implement a safe version of <code>div</code> and <code>mod</code> that just returns 0 if the user tries to divide by 0:</p>
+<pre><code>Prelude&gt; x `safeDiv` y = if y == 0 then 0 else x `div` y
+Prelude&gt; x `safeMod` y = if y == 0 then 0 else x `mod` y
+Prelude&gt; 10 `safeDiv` 5
+2
+Prelude&gt; 10 `safeDiv` 0
+0</code></pre>
+<p>Clearly, the definitions of <code>safeDiv</code> and <code>safeMod</code> share a pattern. So let us extract the pattern “if y is zero then return zero else do something else”:</p>
+<pre><code>Prelude&gt; unlessZero y z = if y == 0 then 0 else z
+Prelude&gt; x `safeDiv` y = unlessZero y (x `div` y)
+Prelude&gt; x `safeMod` y = unlessZero y (x `mod` y)
+Prelude&gt; 10 `safeDiv` 5
+2
+Prelude&gt; 10 `safeDiv` 0
+0</code></pre>
+<p>So that works. But it only works because Haskell is lazy. Consider what would happen in a strict language, where expressions are evaluated before passed to a function:</p>
+<pre><code>  10 `safeDiv` 0
+= unlessZero 0 (10 `div` 0)
+= unlessZero 0 (*** Exception: divide by zero</code></pre>
+<p>Only with laziness can we easily abstract not only over computations, but even over control flow, and create our own control flow constructs – simply as higher-order functions!</p>
+<p>In fact, even <code>if … then … else</code> could just be a normal function with three parameters, defined somewhere in the standard library. The fact that there is special syntax for it is pure convenience – which, again, is not the case in strict languages.</p>
+</section>
+</section>
+<section id="types" class="level1">
+<h1><span class="header-section-number">2</span> Types</h1>
+<p>In the first section, we have seen how functional programming opens the way to abstraction, and to condense independent concerns into separate pieces of code. This is a very powerful tool for modularity, and to focus on the relevant part of a problem, while keeping the bookkeeping out of sight. But powerful is also dangerous – using a higher order function correctly without any aid, can be mind-bending.</p>
+<p>Whenever we write functions like in the previous section, we have an idea in our head about what their arguments are – are they just numbers, or are they functions, and what kind of functions – and what they return. It is obvious to us that writing <code>twice isEven</code> does not make sense, because <code>isEven</code> returns <code>True</code> or <code>False</code>, but expects a number, so it cannot be applied to itself.</p>
+<p>This is all simple and obvious, but it is a lot to keep in your head as the code grows larger, and even more so once the code is changing and there are more people working on it. So to keep this power and complexity manageable, Haskell has a strong static type system, which is essentially a way for you to communicate with the compiler about these ideas you have in your head. You can ask the compiler “what do you know about this function? what can it take, what kind of things does it return?”. And you can tell the compiler “this function ought to take this and return that (and please tell me if you disagree)”.</p>
+<p>In fact, many Haskellers prefer to do type-driven development: First think about and write down the type of the function they need to create, and <em>then</em> think about implementing them.</p>
+<p>Besides communicating with the compiler, types are also crucial in communicating with your fellow developers and/or users of your API. For many functions, the type alone, or the type and the name, is sufficient to tell you what it does.</p>
+<section id="tooling-interlude-editing-files" class="level2">
+<h2><span class="header-section-number">2.1</span> Tooling interlude: Editing files ★</h2>
+<p>At this point, we should switch from working exclusively in the REPL to writing an actual Haskell file. We can start by creating a file <code>Types.hs</code>, and put in the code from the previous section:</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb59-1" title="1">isRound x <span class="fu">=</span> x <span class="ot">`mod`</span> <span class="dv">10</span> <span class="fu">==</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb59-2" title="2">hasLastDigit x y <span class="fu">=</span> x <span class="ot">`div`</span> <span class="dv">10</span> <span class="fu">==</span> y</a>
+<a class="sourceLine" id="cb59-3" title="3">isHalfRound x <span class="fu">=</span> x <span class="ot">`hasLastDigit`</span> <span class="dv">0</span> <span class="fu">||</span> x <span class="ot">`hasLastDigit`</span> <span class="dv">5</span></a>
+<a class="sourceLine" id="cb59-4" title="4">x <span class="ot">`divides`</span> y <span class="fu">=</span> x <span class="ot">`div`</span> y <span class="fu">==</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb59-5" title="5">twice f x <span class="fu">=</span> f (f x)</a>
+<a class="sourceLine" id="cb59-6" title="6">countCountDigits x <span class="fu">=</span> twice countDigits x</a>
+<a class="sourceLine" id="cb59-7" title="7">sumSumDigits x <span class="fu">=</span> twice sumDigits x</a>
+<a class="sourceLine" id="cb59-8" title="8">sumDigitsWith f n <span class="fu">=</span> <span class="kw">if</span> n <span class="fu">&lt;</span> <span class="dv">10</span> <span class="kw">then</span> f n <span class="kw">else</span> sumDigitsWith f (n <span class="ot">`div`</span> <span class="dv">10</span>) <span class="fu">+</span> f (n <span class="ot">`mod`</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb59-9" title="9">countDigits <span class="fu">=</span> sumDigitsWith (\d <span class="ot">-&gt;</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb59-10" title="10">sumDigits <span class="fu">=</span> sumDigitsWith (\d <span class="ot">-&gt;</span> d)</a>
+<a class="sourceLine" id="cb59-11" title="11">fixEq f x <span class="fu">=</span> <span class="kw">if</span> f x <span class="fu">==</span> x <span class="kw">then</span> x <span class="kw">else</span> fixEq f (f x)</a>
+<a class="sourceLine" id="cb59-12" title="12">isMultipleOf3 x <span class="fu">=</span> fixEq sumDigits x <span class="fu">==</span> <span class="dv">3</span> <span class="fu">||</span> fixEq sumDigits x <span class="fu">==</span> <span class="dv">6</span> <span class="fu">||</span> fixEq sumDigits x <span class="fu">==</span> <span class="dv">9</span></a></code></pre></div>
+<p>We can load this file into <code>ghci</code> by either starting it with <code>ghci Types.hs</code> or by typing <code>:load Types.hs</code>. After you change and save the file, you can reload with <code>:reload</code> (or simply <code>:r</code>)</p>
+</section>
+<section id="basic-types" class="level2">
+<h2><span class="header-section-number">2.2</span> Basic types</h2>
+<p>As I mentioned before, you can chat with the compiler about the types of things, and ask what it thinks they are. We can do that with the <code>:type</code> (or <code>:t</code>) command:</p>
+<pre><code>*Main&gt; :t sumDigits
+sumDigits :: Integer -&gt; Integer</code></pre>
+<p>Here, GHC tells us the type of <code>sumDigits</code>, in the form of a <em>type annotation</em>, i.e. a term (<code>sumDigits</code>) followed by two colons, followed by its type. The type itself tells us that <code>sumDigits</code> is a function (as indicated by the arrow) that takes an <code>Integer</code> as an argument and returns an <code>Integer</code> as a result. Which greatly matches our expectation!</p>
+<p>Instead of asking GHC for the type, we can also specify it, simply by adding the line</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb61-1" title="1"><span class="ot">sumDigits ::</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span></a></code></pre></div>
+<p>to the file (commonly directly above the function definition, rarely all bundled up in the beginning).</p>
+<p>If we insert a type annotation that does not match what we wrote in the code, for example, if we added</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb62-1" title="1"><span class="ot">isRound ::</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span></a></code></pre></div>
+<p>we would get an error message like</p>
+<pre><code>types.hs:2:13: error:
+    • Couldn&#39;t match expected type ‘Integer’ with actual type ‘Bool’
+    • In the expression: x `mod` 10 == 0
+      In an equation for ‘isRound’: isRound x = x `mod` 10 == 0
+  |
+2 | isRound x = x `mod` 10 == 0
+  |             ^^^^^^^^^^^^^^^</code></pre>
+<p>Note that the compiler believes the type signature, and complains about the code, not the other way around.</p>
+<p>The error message mentions a type <code>Bool</code> which, as you can guess, is the type of Boolean expressions, e.g. <code>True</code> and <code>False</code>. With this knowledge, we can write the correct type signature for <code>isRound</code>:</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb64-1" title="1"><span class="ot">isRound ::</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a></code></pre></div>
+</section>
+<section id="polymorphism" class="level2">
+<h2><span class="header-section-number">2.3</span> Polymorphism</h2>
+<p>Let us consider <code>twice</code> for a moment, and think about what expect from its type. It is a function that takes two arguments, the and the first ought to be a function itself… and here is how GHC writes this:</p>
+<pre><code>*Main&gt; :t twice
+twice :: (t -&gt; t) -&gt; t -&gt; t</code></pre>
+<p>From this example, we learn that * the type of functions with multiple arguments is written using multiple arrows, * the function arrow can just as occur inside an argument, namely when an argument itself is a function.</p>
+<p>But what is this type <code>t</code>? There is not, actually, a type called <code>t</code>. Instead, this is a <em>type variable</em>, meaning that the function <code>twice</code> can be used with any type. Any lower-case identifier in a type is a type variable (not just <code>t</code>), and concrete types are always upper-case.</p>
+<p>Here we can see that we can use <code>twice</code> with numbers, Booleans, and even with functions:</p>
+<pre><code>*Main&gt; twice countDigits (99^99)
+3
+*Main&gt; twice not True
+True
+*Main&gt; twice twice countDigits (99^99)
+1</code></pre>
+<p>What does not work is passing a function to <code>twice</code> that works on numbers, but then pass a <code>Bool</code>:</p>
+<pre><code>*Main&gt; twice countDigits True
+
+&lt;interactive&gt;:12:19: error:
+    • Couldn&#39;t match expected type ‘Integer’ with actual type ‘Bool’
+    • In the second argument of ‘twice’, namely ‘True’
+      In the expression: twice countDigits True
+      In an equation for ‘it’: it = twice countDigits True</code></pre>
+<p>In other words: The <code>t</code>s in the type of <code>twice</code> can become <em>any</em> type, but it has the be the same type everywhere.</p>
+<div class="Exercise">
+<p>What do you think is the type of <code>id</code>?</p>
+</div>
+<div class="Solution">
+<div class="sourceCode" id="cb68"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb68-1" title="1"><span class="fu">id</span><span class="ot"> ::</span> a <span class="ot">-&gt;</span> a</a></code></pre></div>
+</div>
+<p>If we ask for the type of the function <code>const</code>, we see two different type variables:</p>
+<pre><code>*Main&gt; :t const
+const :: a -&gt; b -&gt; a</code></pre>
+<p>And here we can indeed instantiate them at different types:</p>
+<pre><code>*Main&gt; :t const True 1
+const True 1 :: Bool</code></pre>
+</section>
+<section id="constrained-types-a-first-glimpse" class="level2">
+<h2><span class="header-section-number">2.4</span> Constrained types (a first glimpse)</h2>
+<p>There are more polymorphic functions in our initial set, for example <code>fixEq</code>:</p>
+<pre><code>*Main&gt; :t fixEq
+fixEq :: Eq t =&gt; (t -&gt; t) -&gt; t -&gt; t</code></pre>
+<p>The part after the <code>=&gt;</code> is what we expect: two arguments, the first a function, all the same types, just like with <code>twice</code>. The part before the <code>=&gt;</code> is new: It is a <em>constraint</em>, and it limits which types <code>t</code> can be instantiated with. Remember that <code>fixEq</code> uses <code>(==)</code> to check if the value has stabilized. But not all values can be compared for equality! (In particular, functions cannot). So <code>fixEq</code> does not work with any type, but only those that support equality. This is what <code>Eq t</code> indicates, and indeed we get an error message when we try to do it wrongly:</p>
+<pre><code>*Main&gt; fixEq twice not True
+
+&lt;interactive&gt;:27:1: error:
+    • No instance for (Eq (Bool -&gt; Bool)) arising from a use of ‘fixEq’
+        (maybe you haven&#39;t applied a function to enough arguments?)
+    • In the expression: fixEq twice not True
+      In an equation for ‘it’: it = fixEq twice not True</code></pre>
+<p>This <code>Eq</code> thing is not some built-in magic, but rather a <em>type class</em>, another very powerful and important feature of Haskell, which we will dive into separately later.</p>
+<p>Other functions in our list are polymorphic where we may not have expected it:</p>
+<pre><code>*Main&gt; :t sumDigitsWith
+sumDigitsWith :: (Integral a1, Num a2) =&gt; (a1 -&gt; a2) -&gt; a1 -&gt; a2</code></pre>
+<p>This is not the type we might have expected! This is because Haskell supports different numeric types, and uses type classes to overload the numeric operations. But remember that typing is a conversation: We can simply tell GHC that we want a different (more specific) type for <code>sumDigitsWith</code>, by adding</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb74-1" title="1"><span class="ot">sumDigitsWith ::</span> (<span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span>) <span class="ot">-&gt;</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Integer</span></a></code></pre></div>
+<p>to our file. In fact, in practice one <em>always</em> writes full type signatures for all top-level definitions, so this should be less of a problem for Haskell readers.</p>
+</section>
+<section id="parametricity" class="level2">
+<h2><span class="header-section-number">2.5</span> Parametricity</h2>
+<p>One obvious use for such polymorphism is to write code once, and use it at different types. But there is another great advantage of polymorphic functions, even if we only ever intend to instantiate the type variables with the same type, and that is reasoning by parametricity.</p>
+<p>In a function with a polymorphic type like <code>twice</code> there is not a lot we can do with the parameters. Sure, we can apply <code>f</code> to <code>x</code>, and maybe apply <code>f</code> more than once. But that is just about all we can do: Because <code>x</code> can have an arbitrary type, we cannot do arithmetic with it, we cannot print it, we cannot even compare it to other values of type <code>x</code>.</p>
+<p>This severely restricts what <code>twice</code> can do at all … but on the other hand means that just from looking at the type signature of <code>twice</code> we already know a lot about what it does.</p>
+<p>A very simple example for that is the function <code>id</code>, with type <code>a -&gt; a</code>. <em>Any</em> function of this type will either</p>
+<ul>
+<li>return its argument (i.e. be the identity function),</li>
+<li>return never (i.e. go into an infinite loop), or</li>
+<li>raise an exception.</li>
+</ul>
+<div class="Exercise">
+<p>A great example for the power of polymorphism is the following type signature:</p>
+<pre><code>(a -&gt; b -&gt; c) -&gt; b -&gt; a -&gt; c</code></pre>
+<p>There is a function of that type in the standard library. Can you tell what it does? Can you guess its name? You can use a type-based search engine like <a href="https://www.haskell.org/hoogle/?hoogle=%28a+-%3E+b+-%3E+c%29+-%3E+b+-%3E+a+-%3E+c">Hoogle</a> to find the function.</p>
+</div>
+<div class="Solution">
+<p>It is the function <code>flip</code> that takes a function and swaps its first two arguments.</p>
+</div>
+</section>
+<section id="algebraic-data-types" class="level2">
+<h2><span class="header-section-number">2.6</span> Algebraic data types</h2>
+<p>The function type is very expressive, and one can model many data structures purely with functions. But of course it is more convenient to use dedicated data structures. There are a number of data structure types that come with the standard library, in particular tuples, lists, the <code>Maybe</code> type. But it is more instructive to start defining our own.</p>
+<p>We can declare new data types using the <code>data</code> keyword, the name of the type, the <code>=</code> sign, and then a list of <em>constructors</em>.</p>
+<section id="enumerations" class="level3">
+<h3><span class="header-section-number">2.6.1</span> Enumerations</h3>
+<p>In the simplest case, we can use this to declare an enumeration type:</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb76-1" title="1"><span class="kw">data</span> <span class="dt">Suit</span> <span class="fu">=</span> <span class="dt">Diamonds</span> <span class="fu">|</span> <span class="dt">Clubs</span> <span class="fu">|</span> <span class="dt">Hearts</span> <span class="fu">|</span> <span class="dt">Spades</span></a></code></pre></div>
+<p>From now on, we can use the constructors, e.g. <code>Diamonds</code> as values of type <code>Suit</code>. This is how we <em>create</em> values of type <code>Suit</code> – and it is the only way, so we know that every value of type <code>Suit</code> is, indeed, one of these four constructors.</p>
+<p>When we have a value of type <code>Suit</code> then the only thing we can really do with it is to find out which of these four constructors it actually is. The way to do that is using <em>pattern matching</em>, for example using the <code>case … of …</code> syntax:</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb77-1" title="1"><span class="ot">isRed ::</span> <span class="dt">Suit</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb77-2" title="2">isRed s <span class="fu">=</span> <span class="kw">case</span> s <span class="kw">of</span></a>
+<a class="sourceLine" id="cb77-3" title="3">  <span class="dt">Diamonds</span> <span class="ot">-&gt;</span> <span class="dt">True</span></a>
+<a class="sourceLine" id="cb77-4" title="4">  <span class="dt">Hearts</span> <span class="ot">-&gt;</span> <span class="dt">True</span></a>
+<a class="sourceLine" id="cb77-5" title="5">  _ <span class="ot">-&gt;</span> <span class="dt">False</span></a></code></pre></div>
+<p>The expression <code>case e of …</code> evaluates the <em>scrutinee</em> <code>e</code>, and then linearly goes through the list of cases. If the value of the scrutinee matches the <em>pattern</em> left of the arrow, the whole expression evaluates to the right-hand side. We see two kinds of patterns here: Constructor patterns like <code>Diamonds</code>, which match simply when the value is the constructor, and the <em>wildcard pattern</em>, written as an underscore, which matches any value.</p>
+<p>It is common to immediately pattern match on the parameter of a function, so Haskell supports pattern-matching directly in the function definition:</p>
+<div class="sourceCode" id="cb78"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb78-1" title="1"><span class="ot">isRed ::</span> <span class="dt">Suit</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb78-2" title="2">isRed <span class="dt">Diamonds</span> <span class="fu">=</span> <span class="dt">True</span></a>
+<a class="sourceLine" id="cb78-3" title="3">isRed <span class="dt">Hearts</span> <span class="fu">=</span> <span class="dt">True</span></a>
+<a class="sourceLine" id="cb78-4" title="4">isRed _ <span class="fu">=</span> <span class="dt">False</span></a></code></pre></div>
+<p>The type <code>Bool</code> that we have already used before is nothing else but one of these enumeration types, defined as</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb79-1" title="1"><span class="kw">data</span> <span class="dt">Bool</span> <span class="fu">=</span> <span class="dt">False</span> <span class="fu">|</span> <span class="dt">True</span></a></code></pre></div>
+<p>and we could do without <code>if … then … else …</code> by pattern-matching on <code>Bool</code>:</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb80-1" title="1"><span class="ot">ifThenElse ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> a</a>
+<a class="sourceLine" id="cb80-2" title="2">ifThenElse <span class="dt">True</span> x y <span class="fu">=</span> x</a>
+<a class="sourceLine" id="cb80-3" title="3">ifThenElse <span class="dt">False</span> x y <span class="fu">=</span> y</a></code></pre></div>
+<p>the only reason to have <code>if … then … else …</code> is that it is a bit more readable.</p>
+</section>
+<section id="constructor-with-parameters" class="level3">
+<h3><span class="header-section-number">2.6.2</span> Constructor with parameters</h3>
+<p>So far, the constructors were just plain values. But we can also turn them into “containers” of sort, where we can store other values. As an basic example, maybe we want to introduce complex numbers:</p>
+<pre><code>data Complex = C Integer Integer</code></pre>
+<p>(Mathematically educated readers please excuse the use of <code>Integers</code> here).</p>
+<p>This creates a new type <code>Complex</code>, with a constructor <code>C</code>. But <code>C</code> itself is not a value of type <code>Complex</code>, but rather it is a function that creates values of type <code>Complex</code> and, crucially, it is the only way of creating values of type <code>Complex</code>. We can ask for the type of <code>C</code> and see that it is indeed just a function:</p>
+<pre><code>Prelude&gt; :t C
+C :: Integer -&gt; Integer -&gt; Complex</code></pre>
+<p>so it should be clear how to use it:</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb83-1" title="1"><span class="ot">origin ::</span> <span class="dt">Complex</span></a>
+<a class="sourceLine" id="cb83-2" title="2">origin <span class="fu">=</span> <span class="dt">C</span> <span class="dv">0</span> <span class="dv">0</span></a></code></pre></div>
+<p>Again, and as always, the way to use a complex number is by pattern matching. This time we use pattern matching not to distinguish different cases – <em>every</em> <code>Complex</code> is a <code>C</code> – but to extract the parameters of the constructor:</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb84-1" title="1"><span class="ot">addC ::</span> <span class="dt">Complex</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span> <span class="ot">-&gt;</span> <span class="dt">Complex</span></a>
+<a class="sourceLine" id="cb84-2" title="2">addC (<span class="dt">C</span> x1 y1) (<span class="dt">C</span> x2 y2) <span class="fu">=</span> <span class="dt">C</span> (x1 <span class="fu">+</span> x2) (y1 <span class="fu">+</span> y2)</a></code></pre></div>
+<p>The parameter in a pattern – the <code>x1</code> here – can itself be a pattern, for example <code>0</code> (which matches only the number 0), or underscore:</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb85-1" title="1"><span class="ot">isReal ::</span> <span class="dt">Complex</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb85-2" title="2">isReal (<span class="dt">C</span> <span class="dv">0</span> _) <span class="fu">=</span> <span class="dt">True</span></a>
+<a class="sourceLine" id="cb85-3" title="3">isReal _ <span class="fu">=</span> <span class="dt">False</span></a></code></pre></div>
+<p>A type like <code>Complex</code>, with exactly one constructor, is called a <em>product type</em>. But we can of course have types with more than one constructor and constructor arguments:</p>
+<div class="sourceCode" id="cb86"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb86-1" title="1"><span class="kw">data</span> <span class="dt">Riemann</span> <span class="fu">=</span> <span class="dt">Complex</span> <span class="dt">Complex</span> <span class="fu">|</span> <span class="dt">Infinity</span></a></code></pre></div>
+<p>This declares a new type <code>Riemann</code> that can be built using one of these two constructors:</p>
+<ol type="1">
+<li><p>The constructor <code>Complex</code>, which takes one argument, of type <code>Complex</code>. Types and terms (including constructors) have different namespaces, so we can have a type called <code>Complex</code>, and a constructor called <code>Complex</code>, and they can be completely independent. This can be confusing, but is rather idiomatic.</p>
+<p>The type of <code>Complex</code> shows that we can use it as a function, to create a point of the <code>Riemann</code> sphere from a complex number:</p>
+<pre><code>Prelude&gt; :t Complex
+Complex :: Complex -&gt; Riemann</code></pre></li>
+<li><p>The constructor <code>Infinity</code> takes no arguments, and simply is a value of type <code>Riemann</code> itself.</p></li>
+</ol>
+<p>When we pattern match on a value of type <code>Riemann</code>, we learn whether it was created using <code>Complex</code> or <code>Infinity</code>, and in the former case, we also get the complex number passed to it:</p>
+<div class="sourceCode" id="cb88"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb88-1" title="1"><span class="ot">addR ::</span> <span class="dt">Riemann</span> <span class="ot">-&gt;</span> <span class="dt">Riemann</span> <span class="ot">-&gt;</span> <span class="dt">Riemann</span></a>
+<a class="sourceLine" id="cb88-2" title="2">addR (<span class="dt">Complex</span> c1) (<span class="dt">Complex</span> c2) <span class="fu">=</span> <span class="dt">Complex</span> (c1 <span class="ot">`add`</span> c2)</a>
+<a class="sourceLine" id="cb88-3" title="3">addR <span class="dt">Infinity</span> _  <span class="fu">=</span> <span class="dt">Infinity</span></a>
+<a class="sourceLine" id="cb88-4" title="4">addR _ <span class="dt">Infinity</span>  <span class="fu">=</span> <span class="dt">Infinity</span></a></code></pre></div>
+<p>A data type that has more than one constructor is commonly called a <em>sum type</em>. So these data types are built from sums and products, and hence are called algebraic data types (ADTs).</p>
+</section>
+<section id="recursive-data-types" class="level3">
+<h3><span class="header-section-number">2.6.3</span> Recursive data types</h3>
+<p>It it worth pointing out that it is completely fine to haven a constructor argument of the type that we are currently defining. This way, we obtain a <em>recursive data type</em>, and this is the foundation for many important data structures, in particular lists and trees of various sorts. Here is a simple example, a binary tree with numbers on all internal nodes:</p>
+<div class="sourceCode" id="cb89"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb89-1" title="1"><span class="kw">data</span> <span class="dt">Tree</span> <span class="fu">=</span> <span class="dt">Leaf</span> <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Integer</span> <span class="dt">Tree</span> <span class="dt">Tree</span></a></code></pre></div>
+<p>Again, this can be read as “a value of type <code>Tree</code> is either a <code>Leaf</code>, or it is a <code>Node</code> that contains a value of type <code>Integer</code> and references to two subtrees.”</p>
+<p>There is nothing particularly interesting about constructing such a tree (use <code>Leaf</code> and <code>Node</code>) and traversing it (use pattern matching). Here is a piece of idiomatic code that inserts a new number into a tree:</p>
+<div class="sourceCode" id="cb90"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb90-1" title="1"><span class="ot">insert ::</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span></a>
+<a class="sourceLine" id="cb90-2" title="2">insert x <span class="dt">Leaf</span> <span class="fu">=</span> <span class="dt">Node</span> x <span class="dt">Leaf</span> <span class="dt">Leaf</span></a>
+<a class="sourceLine" id="cb90-3" title="3">insert x (<span class="dt">Node</span> y t1 t2)</a>
+<a class="sourceLine" id="cb90-4" title="4">    <span class="fu">|</span> y <span class="fu">&lt;</span> x     <span class="fu">=</span> <span class="dt">Node</span> y t1 (insert x t2)</a>
+<a class="sourceLine" id="cb90-5" title="5">    <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> <span class="dt">Node</span> y (insert x t1) t2</a></code></pre></div>
+<p>This code shows a new, syntactic feature: Pattern guards! These are Boolean expressions that you can use to further restrict when a case is taken. The third case in this function definition is only used if <code>y &lt; x</code>, otherwise the following cases are tried. Of course this could be written using <code>if … then … else …</code>, but the readability and aesthetics are better with pattern guards. The value <code>otherwise</code> is simply <code>True</code>, but this reads better.</p>
+</section>
+<section id="polymorphic-data-types" class="level3">
+<h3><span class="header-section-number">2.6.4</span> Polymorphic data types</h3>
+<p>The tree data type declared in the previous section ought to be useful not just for integers, but maybe for any type. But it would be seriously annoying to have to create a new tree data type for each type we want to store in the tree. Therefore, we haven have <em>polymorphic data types</em>. In the example of the tree, we can write:</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb91-1" title="1"><span class="kw">data</span> <span class="dt">Tree</span> a <span class="fu">=</span> <span class="dt">Leaf</span> <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)</a></code></pre></div>
+<p>You may remember that the <code>a</code> here ought to be a type variable, because it occurs in the place of a type, but is lower-case. When we want to use this tree data type at a concrete type, say <code>Integer</code>, we simply write <code>Tree Integer</code>:</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb92-1" title="1"><span class="ot">insert ::</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="dt">Integer</span></a></code></pre></div>
+<p>The actual code of the function does not change.</p>
+<p>We can also write functions that work on polymorphic trees, i.e. which we can use on <em>any</em> <code>Tree</code>, no matter what type the values in the nodes are. A good example is:</p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb93-1" title="1"><span class="ot">size ::</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Integer</span></a>
+<a class="sourceLine" id="cb93-2" title="2">size <span class="dt">Leaf</span> <span class="fu">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb93-3" title="3">size (<span class="dt">Node</span> _ t1 t2) <span class="fu">=</span> <span class="dv">1</span> <span class="fu">+</span> size t1 <span class="fu">+</span> size t2</a></code></pre></div>
+<p>Again, parametricity makes the type signature of such a function more useful than it seems at first: Just from looking at the type signature of <code>size</code> we <em>know</em> that this function does not look at the values stored in the nodes. Together with the name, that is really all the documentation we might need. Compare this to <code>size :: Tree Integer -&gt; Integer</code> – now it could just as well be that this function includes the number stored in the node in the result somehow.</p>
+</section>
+<section id="functions-in-data-types" class="level3">
+<h3><span class="header-section-number">2.6.5</span> Functions in data types ★</h3>
+<p>Maybe this is obvious to you, after the emphasis on functions in the first chapter, but it is still worth pointing out that data type can also store functions. This blurs the distinction between data and code some more, as this nice example shows:</p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb94-1" title="1"><span class="kw">data</span> <span class="dt">Stream</span> a b</a>
+<a class="sourceLine" id="cb94-2" title="2">    <span class="fu">=</span> <span class="dt">NeedInput</span> (a <span class="ot">-&gt;</span> <span class="dt">Stream</span> a b)</a>
+<a class="sourceLine" id="cb94-3" title="3">    <span class="fu">|</span> <span class="dt">HasOutput</span> b (<span class="dt">Stream</span> a b)</a>
+<a class="sourceLine" id="cb94-4" title="4">    <span class="fu">|</span> <span class="dt">Done</span></a></code></pre></div>
+<p>The type <code>Stream a b</code> models a state machine that consumes values of type <code>a</code>, produces values of type <code>b</code>, and maybe eventually stops. Such a machine is in one of three states:</p>
+<ol type="1">
+<li>Waiting for input. This uses the <code>NeedInput</code> constructor, which carries a <em>function</em> that consumes a type of value <code>a</code> and returns the new state of the machine.</li>
+<li>Producing output. This uses the <code>HasOutput</code> constructor, which stores the output value of type <code>b</code>, and the subsequent state of the machine.</li>
+<li><code>Done</code>.</li>
+</ol>
+<p>We can create a state machine that does run-length encoding this way. This one does not ever stop, but that’s fine:</p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb95-1" title="1"><span class="ot">rle ::</span> <span class="dt">Eq</span> a <span class="ot">=&gt;</span> <span class="dt">Stream</span> a (<span class="dt">Integer</span>,a)</a>
+<a class="sourceLine" id="cb95-2" title="2">rle <span class="fu">=</span> <span class="dt">NeedInput</span> rle_start</a>
+<a class="sourceLine" id="cb95-3" title="3"></a>
+<a class="sourceLine" id="cb95-4" title="4"><span class="ot">rle_start ::</span> <span class="dt">Eq</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Stream</span> a (<span class="dt">Integer</span>, a)</a>
+<a class="sourceLine" id="cb95-5" title="5">rle_start x <span class="fu">=</span> <span class="dt">NeedInput</span> (rle_count x <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb95-6" title="6"></a>
+<a class="sourceLine" id="cb95-7" title="7"><span class="ot">rle_count ::</span> <span class="dt">Eq</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Integer</span> <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Stream</span> a (<span class="dt">Integer</span>, a)</a>
+<a class="sourceLine" id="cb95-8" title="8">rle_count x n x&#39; <span class="fu">|</span> x <span class="fu">==</span> x&#39; <span class="fu">=</span> <span class="dt">NeedInput</span> (rle_count x (n <span class="fu">+</span> <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb95-9" title="9">                 <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> <span class="dt">HasOutput</span> (n, x) (rle_start x&#39;)</a></code></pre></div>
+</section>
+</section>
+<section id="predefined-data-types" class="level2">
+<h2><span class="header-section-number">2.7</span> Predefined data types</h2>
+<p>We intentionally discussed the mechanisms of algebraic data types first, so that we can explain the most common data types in the standard library easily.</p>
+<section id="booleans" class="level3">
+<h3><span class="header-section-number">2.7.1</span> Booleans ★</h3>
+<p>As mentioned before, the values <code>True</code> and <code>False</code> are simply the constructors of a data type defined as</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb96-1" title="1"><span class="kw">data</span> <span class="dt">Bool</span> <span class="fu">=</span> <span class="dt">False</span> <span class="fu">|</span> <span class="dt">True</span></a></code></pre></div>
+<p>There is nothing magic about the definition of <code>Bool</code>. But this type plays a special role because of the <code>if … then … else …</code> construct, and because of the pattern guards seen before.</p>
+</section>
+<section id="maybe" class="level3">
+<h3><span class="header-section-number">2.7.2</span> <code>Maybe</code></h3>
+<p>A very common use case for algebraic data types is to capture the idea of a type whose values “maybe contain nothing, or just a value of type <code>a</code>”. Because this is so common, such a data type is predefined:</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb97-1" title="1"><span class="kw">data</span> <span class="dt">Maybe</span> a <span class="fu">=</span> <span class="dt">Nothing</span> <span class="fu">|</span> <span class="dt">Just</span> a</a></code></pre></div>
+<p>You might see <code>Maybe</code>, for example, in the return type of a function that deserializes a binary or textual representation of a type, for example:</p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb98-1" title="1"><span class="ot">parseFoo ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Foo</span></a></code></pre></div>
+<p>Such an operation can fail, and if the input is invalid, it would return <code>Nothing</code>. As a user of such a function, the only way to get to the value of type <code>a</code> therein is to pattern-match on the result, which forces me to think about and handle the case where the result is <code>Nothing</code>.</p>
+<p>This is much more robust than the common idiom in C, where you have to remember to check for particular error values (-1, or <code>NULL</code>), or Go, where you get both a result and a separate error code, but you can still be lazy and use the result without checking the error code.</p>
+<p>A big part of Haskell’s reputation as a language that makes it easier to write correct code relies on the use of data types to precisely describe the values you are dealing with.</p>
+<div class="Exercise">
+<p>How many values are there of type <code>Maybe (Maybe Bool)</code>. When can it be useful to nest <code>Maybe</code> in that way?</p>
+</div>
+<div class="Solution">
+<p>There are four: <code>Nothing</code>, <code>Just Nothing</code>, <code>Just False</code> and <code>Just True</code>. It can be useful if, for example, the outer <code>Maybe</code> indicates whether some input was <em>valid</em>, whereas <code>Just Nothing</code> could indicate that the input was valid, but empty. But arguably this is not best practice, and dedicated data types with more speaking names could be preferred here.</p>
+</div>
+</section>
+<section id="either" class="level3">
+<h3><span class="header-section-number">2.7.3</span> <code>Either</code> ★</h3>
+<p>With maybe we can express “one or none”. Sometimes we want “one or another” type. For this, the standard library provides</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb99-1" title="1"><span class="kw">data</span> <span class="dt">Either</span> a b <span class="fu">=</span> <span class="dt">Left</span> a <span class="fu">|</span> <span class="dt">Right</span> b</a></code></pre></div>
+<p>Commonly, this type is used for computations that can fail, but that provide some useful error messages when they fail:</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb100-1" title="1"><span class="ot">parseFoo ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">ParseError</span> <span class="dt">Foo</span></a></code></pre></div>
+<p>This gives us the same robustness benefits of <code>Maybe</code>, but also a more helpful error messages. If used in this way, then the <code>Left</code> value is always used for the error or failure case, and the <code>Right</code> value for when everything went all right.</p>
+</section>
+<section id="lists" class="level3">
+<h3><span class="header-section-number">2.7.4</span> Lists</h3>
+<p>In the previous section we defined trees using a recursive data type. It should be obvious that we can define lists in a very analogous way:</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb101-1" title="1"><span class="kw">data</span> <span class="dt">List</span> a <span class="fu">=</span> <span class="dt">Empty</span> <span class="fu">|</span> <span class="dt">Link</span> a (<span class="dt">List</span> a)</a></code></pre></div>
+<p>This data structure is so ubiquitous in functional programming that it not only comes with the standard library, it also has very special, magic syntax:</p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb102-1" title="1"><span class="kw">data</span> [a] <span class="fu">=</span> [] <span class="fu">|</span> a <span class="fu">:</span> [a]</a></code></pre></div>
+<p>In words: The type <code>[a]</code> is the type of lists with values of type <code>a</code>. Such a list is either the empty list, written as <code>[]</code>, or it is a non-empty list containing of a head <code>x</code> of type <code>a</code>, and a tail <code>xs</code>, and is written as <code>x:xs</code>. Note that the constructor <code>(:)</code>, called “cons”, is using operator syntax.</p>
+<p>There is more special syntax for lists:</p>
+<ol type="1">
+<li>Finite lists can be written as <code>[1, 2, 3]</code> instead of <code>1 : 2 : 3 : []</code>.</li>
+<li>Lists of numbers can be enumerated, e.g. <code>[1..10]</code>, or <code>[0,2..10]</code>, or even (due to laziness) <code>[1..]</code>.</li>
+<li>List comprehensions look like <code>[ (x,y) | x &lt;- xs, y &lt;- ys, x &lt; y ]</code>, reminiscent of the set comprehension syntax from mathematics. We will not discuss them now, I just wanted to show them and tell you what to search for.</li>
+</ol>
+<p>Common operations on lists worth knowing are <code>(++)</code> to concatenate two lists.</p>
+<p>Lists are very useful for many applications, but they are not a particularly high-performance data structure – random access and concatenation is expensive, and they use quite a bit of memory. Depending on the application, other types like arrays/vectors, finger trees, difference lists might be more suitable.</p>
+</section>
+<section id="characters-and-strings" class="level3">
+<h3><span class="header-section-number">2.7.5</span> Characters and strings ★</h3>
+<p>Unexpectedly, Haskell has built-in support for characters and text. A single character has type <code>Char</code>, and is written in single quotes, e.g. <code>'a'</code>, <code>'☃'</code>, <code>'\''</code>, <code>'\0'</code>, <code>'\xcafe'</code>. These character are Unicode code points, and not just 7 or 8 bit characters.</p>
+<p>The built-in type <code>String</code> is just an alias for <code>[Char]</code>, i.e. a list of characters. Haskell supports special built-in syntax for strings, using double quotes, but this is just syntactic sugar to the list syntax:</p>
+<pre><code>Prelude&gt; &quot;hello&quot;
+&quot;hello&quot;
+Prelude&gt; [&#39;h&#39;,&#39;e&#39;,&#39;l&#39;,&#39;l&#39;,&#39;o&#39;]
+&quot;hello&quot;
+Prelude&gt; &#39;h&#39;:&#39;e&#39;:&#39;l&#39;:&#39;l&#39;:&#39;o&#39;:[]
+&quot;hello&quot;</code></pre>
+<p>Because <code>String</code> is built on the list type, it has the same problems with performance: While it is fine to be used in non-critical parts of the code (diagnostic and error messages, command line and configuration file parsing, filenames), it is usually the wrong choice if large amounts of strings need to be processed, e.g. in a templating library. Additionally libraries provide more suitable data structures, in particular <code>ByteString</code> for binary data and <code>Text</code> for human-readable text.</p>
+</section>
+</section>
+<section id="records" class="level2">
+<h2><span class="header-section-number">2.8</span> Records</h2>
+</section>
+<section id="newtypes" class="level2">
+<h2><span class="header-section-number">2.9</span> Newtypes</h2>
+<p>A data type with one constructor and one field…</p>
+</section>
+<section id="type-synonyms" class="level2">
+<h2><span class="header-section-number">2.10</span> Type synonyms</h2>
+<p>Haddock-documentation.</p>
+<p>Outlook: More type safety (refinement types, e.g. for natural numbers)</p>
+</section>
+</section>
+<section id="code-structure-small-and-large" class="level1">
+<h1><span class="header-section-number">3</span> Code structure small and large</h1>
+<p>Let, where, modules, imports, qualified names</p>
+</section>
+</body>
+</html>
